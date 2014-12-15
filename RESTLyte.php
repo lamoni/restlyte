@@ -21,8 +21,6 @@ class RESTLyte
 
     protected $HTTPHeaders = [];
 
-    protected $responseType;
-
     /**
      * Create an instance of RESTLyte given the parameters.
      *
@@ -32,7 +30,7 @@ class RESTLyte
      * @param bool $verifySSLPeer
      * @param array $HTTPHeaders
      */
-    public function __construct($username, $password, $server, $responseType, $verifySSLPeer=true, $HTTPHeaders=[])
+    public function __construct($server, $username, $password, $verifySSLPeer=true, $HTTPHeaders=[])
     {
 
         $this->setAuthCredentials($username, $password);
@@ -43,25 +41,9 @@ class RESTLyte
 
         $this->setHTTPHeaders($HTTPHeaders);
 
-        $this->setResponseType($responseType);
 
     }
 
-    /**
-     * @return mixed
-     */
-    public function getResponseType()
-    {
-        return $this->responseType;
-    }
-
-    /**
-     * @param mixed $responseType
-     */
-    public function setResponseType($responseType)
-    {
-        $this->responseType = $responseType;
-    }
 
     /**
      * Returns the HTTP headers we've built for our requests.
@@ -237,7 +219,7 @@ class RESTLyte
      * @param array $customCURLOptions
      * @return \Lamoni\RESTLyte\RESTLyteRequest\RESTLyteRequestAbstract
      */
-    public function request($verb, $path, $accept, array $customCURLOptions=[])
+    public function request($verb, $path, $responseType='XML', $accept, array $customCURLOptions=[])
     {
 
         $verb = strtoupper(
@@ -246,9 +228,9 @@ class RESTLyte
             )
         );
 
-        $instantiateClass = '\Lamoni\RESTLyte\RESTLyteRequest\RESTLyteRequest'.$this->getResponseType();
+        $instantiateClass = "\\Lamoni\\RESTLyte\\RESTLyteRequest\\RESTLyteRequest{$responseType}";
 
-        return new $instantiateClass(
+        $request = new $instantiateClass(
             $this->getServer(),
             $verb,
             $path,
@@ -259,6 +241,7 @@ class RESTLyte
             $customCURLOptions
         );
 
+        return $request->getResponse();
     }
 
     /**
@@ -266,12 +249,13 @@ class RESTLyte
      * @param string $accept
      * @return \Lamoni\RESTLyte\RESTLyteRequest\RESTLyteRequestAbstract
      */
-    public function get($path, $accept="")
+    public function get($path, $responseType='XML', $accept="")
     {
 
         return $this->request(
             'GET',
             $path,
+            $responseType,
             $accept
         );
 
@@ -285,11 +269,12 @@ class RESTLyte
      * @param string $accept
      * @return \Lamoni\RESTLyte\RESTLyteRequest\RESTLyteRequestAbstract
      */
-    public function post($path, $postData, $accept="")
+    public function post($path, $responseType='XML', $postData, $accept="")
     {
         return $this->request(
             'POST',
             $path,
+            $responseType,
             $accept,
             [
                 CURLOPT_POSTFIELDS => $postData
@@ -306,11 +291,12 @@ class RESTLyte
      * @param string $accept
      * @return \Lamoni\RESTLyte\RESTLyteRequest\RESTLyteRequestAbstract
      */
-    public function put($path, $postData, $accept="")
+    public function put($path, $responseType='XML', $postData, $accept="")
     {
         return $this->request(
             'PUT',
             $path,
+            $responseType,
             $accept,
             [
                 CURLOPT_POSTFIELDS => $postData
@@ -327,11 +313,12 @@ class RESTLyte
      * @param string $accept
      * @return \Lamoni\RESTLyte\RESTLyteRequest\RESTLyteRequestAbstract
      */
-    public function patch($path, $postData, $accept="")
+    public function patch($path, $responseType='XML', $postData, $accept="")
     {
         return $this->request(
             'PATCH',
             $path,
+            $responseType,
             $accept,
             [
                 CURLOPT_POSTFIELDS => $postData
@@ -348,11 +335,12 @@ class RESTLyte
      * @param string $accept
      * @return \Lamoni\RESTLyte\RESTLyteRequest\RESTLyteRequestAbstract
      */
-    public function delete($path, $postData, $accept="")
+    public function delete($path, $responseType='XML', $postData, $accept="")
     {
         return $this->request(
             'DELETE',
             $path,
+            $responseType,
             $accept,
             [
                 CURLOPT_POSTFIELDS => $postData

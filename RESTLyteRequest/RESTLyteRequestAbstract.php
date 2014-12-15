@@ -8,7 +8,7 @@
 abstract class RESTLyteRequestAbstract
 {
     /**
-     * Holds the cURL response from the server
+     * Holds the cURL response from the server, and then gets modified by the getResponse() call
      *
      * @var string
      */

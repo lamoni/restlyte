@@ -30,7 +30,7 @@ class RESTLyteRequestXML extends RESTLyteRequestAbstract
 
         if (count(libxml_get_errors())) {
 
-            return libxml_get_errors();
+            throw new \Exception("Unable to parse XML: " . libxml_get_errors());
 
         }
 
