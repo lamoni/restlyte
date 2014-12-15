@@ -6,8 +6,6 @@ RESTLyte is a simple REST client library implemented in PHP.
 Examples
 --------
 
-Call REST API with HTTP Authentication, disable SSL checking, send custom HTTP headers, and then use the JSON decoder after requesting JSON output from the server.
---------
 ```php
 $rest = new RESTLyte(
     "https://spaceexample.io",  // Server
