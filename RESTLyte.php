@@ -1,5 +1,6 @@
 <?php namespace Lamoni\RESTLyte;
 
+use Lamoni\RESTLyte\RESTLyteRequest\RESTLyteRequest;
 /**
  * Class RESTLyte
  * @package Lamoni\RESTLyte
@@ -49,7 +50,9 @@ class RESTLyte
      */
     public function getHTTPHeaders()
     {
+
         return $this->HTTPHeaders;
+
     }
 
     /**
@@ -59,7 +62,9 @@ class RESTLyte
      */
     public function setHTTPHeaders($HTTPHeaders)
     {
+
         $this->HTTPHeaders = $HTTPHeaders;
+
     }
 
     /**
@@ -70,7 +75,9 @@ class RESTLyte
      */
     public function addHTTPHeader($headerName, $headerValue)
     {
+
         $this->HTTPHeaders[$headerName] = $headerValue;
+
     }
 
     /**
@@ -80,7 +87,9 @@ class RESTLyte
      */
     public function getVerifySSLPeer()
     {
+
         return $this->verifySSLPeer;
+
     }
 
     /**
@@ -90,7 +99,9 @@ class RESTLyte
      */
     public function setVerifySSLPeer($verifySSLPeer)
     {
+
         $this->verifySSLPeer = $verifySSLPeer;
+
     }
 
     /**
@@ -100,7 +111,9 @@ class RESTLyte
      */
     public function getUsername()
     {
+
         return $this->username;
+
     }
 
     /**
@@ -110,7 +123,9 @@ class RESTLyte
      */
     public function setUsername($username)
     {
+
         $this->username = $username;
+
     }
 
     /**
@@ -120,7 +135,9 @@ class RESTLyte
      */
     public function getPassword()
     {
+
         return $this->password;
+
     }
 
     /**
@@ -130,7 +147,9 @@ class RESTLyte
      */
     public function setPassword($password)
     {
+
         $this->password = $password;
+
     }
 
     /**
@@ -140,7 +159,9 @@ class RESTLyte
      */
     public function getAuthCredentials()
     {
+
         return $this->authCredentials;
+
     }
 
     /**
@@ -156,7 +177,9 @@ class RESTLyte
 
         $this->setPassword($password);
 
-        $this->authCredentials = base64_encode("{$this->username}:{$this->password}");
+        $this->authCredentials = base64_encode(
+            "{$this->username}:{$this->password}"
+        );
 
     }
 
@@ -167,7 +190,9 @@ class RESTLyte
      */
     public function getServer()
     {
+
         return $this->server;
+
     }
 
     /**
@@ -177,72 +202,11 @@ class RESTLyte
      */
     public function setServer($server)
     {
+
         $this->server = rtrim($server, '/');
-    }
-
-    /**
-     * Builds the HTTP headers used in our requests
-     *
-     * @param $verb
-     * @param $path
-     * @param string $accept
-     * @return array
-     */
-    public function buildRequestHeaders($verb, $path, $accept="")
-    {
-
-        $requestHeaders = [
-            "{$verb} {$path} HTTP/1.0",
-            "Authorization: Basic {$this->authCredentials}"
-        ];
-
-        if ($accept !== "") {
-
-            $requestHeaders[] = "Accept: {$accept}";
-
-        }
-
-        $requestHeaders = array_merge($requestHeaders, $this->HTTPHeaders);
-
-        return $requestHeaders;
 
     }
 
-    /**
-     * Initialize cURL, then set your passed and default options
-     *
-     * @param $verb
-     * @param $path
-     * @param $requestHeaders
-     * @param array $customCURLOptions
-     */
-    public function initCURLOptions($verb, $path, $requestHeaders, $customCURLOptions=[])
-    {
-
-        $this->curl = curl_init();
-
-        $curlOptions = [
-            CURLOPT_URL => $this->server . "/" . ltrim($path, '/'),
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HTTPHEADER => $requestHeaders,
-            CURLOPT_SSL_VERIFYPEER => $this->verifySSLPeer,
-            CURLOPT_HTTPGET => 1,
-            CURLOPT_POST => 0
-        ];
-
-        if ($verb !== "GET") {
-
-            $curlOptions[CURLOPT_HTTPGET] = 0;
-
-            $curlOptions[CURLOPT_POST] = 1;
-
-        }
-
-        $curlOptions = $customCURLOptions + $curlOptions;
-
-        curl_setopt_array($this->curl, $curlOptions);
-
-    }
 
     /**
      * Base for REST requests
@@ -251,7 +215,7 @@ class RESTLyte
      * @param $path
      * @param $accept
      * @param array $customCURLOptions
-     * @return \SimpleXMLElement
+     * @return \Lamoni\RESTLyte\RESTLyteRequest\RESTLyteRequest
      */
     public function request($verb, $path, $accept, array $customCURLOptions=[])
     {
@@ -262,24 +226,23 @@ class RESTLyte
             )
         );
 
-        $requestHeaders = $this->buildRequestHeaders($verb, $path, $accept, $this->HTTPHeaders);
-
-        $this->initCURLOptions($verb, $path, $requestHeaders, $customCURLOptions);
-
-        $data = (string)curl_exec($this->curl);
-
-        curl_close($this->curl);
-
-        return simplexml_load_string($data);
+        return new RESTLyteRequest(
+            $this->getServer(),
+            $verb,
+            $path,
+            $this->getAuthCredentials(),
+            $accept,
+            $this->getVerifySSLPeer(),
+            $this->getHTTPHeaders(),
+            $customCURLOptions
+        );
 
     }
 
     /**
-     * Launches a GET request to the server
-     *
      * @param $path
      * @param string $accept
-     * @return \SimpleXMLElement
+     * @return \Lamoni\RESTLyte\RESTLyteRequest\RESTLyteRequest
      */
     public function get($path, $accept="")
     {
@@ -298,7 +261,7 @@ class RESTLyte
      * @param $path
      * @param $postData
      * @param string $accept
-     * @return \SimpleXMLElement
+     * @return \Lamoni\RESTLyte\RESTLyteRequest\RESTLyteRequest
      */
     public function post($path, $postData, $accept="")
     {
@@ -319,7 +282,7 @@ class RESTLyte
      * @param $path
      * @param $postData
      * @param string $accept
-     * @return \SimpleXMLElement
+     * @return \Lamoni\RESTLyte\RESTLyteRequest\RESTLyteRequest
      */
     public function put($path, $postData, $accept="")
     {
@@ -340,7 +303,7 @@ class RESTLyte
      * @param $path
      * @param $postData
      * @param string $accept
-     * @return \SimpleXMLElement
+     * @return \Lamoni\RESTLyte\RESTLyteRequest\RESTLyteRequest
      */
     public function patch($path, $postData, $accept="")
     {
@@ -361,7 +324,7 @@ class RESTLyte
      * @param $path
      * @param $postData
      * @param string $accept
-     * @return \SimpleXMLElement
+     * @return \Lamoni\RESTLyte\RESTLyteRequest\RESTLyteRequest
      */
     public function delete($path, $postData, $accept="")
     {
