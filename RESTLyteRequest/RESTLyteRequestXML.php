@@ -1,8 +1,18 @@
 <?php namespace Lamoni\RESTLyte\RESTLyteRequest;
 
+/**
+ * Class RESTLyteRequestXML
+ * @package Lamoni\RESTLyte\RESTLyteRequest
+ */
 class RESTLyteRequestXML extends RESTLyteRequestAbstract
 {
 
+    /**
+     * Parses our $this->response into a new SimpleXMLElement() object
+     *
+     * @param array $customArgs
+     * @return mixed
+     */
     public function getResponse(array $customArgs=[])
     {
         $defaultCustomArgs = [

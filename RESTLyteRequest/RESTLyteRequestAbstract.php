@@ -1,12 +1,36 @@
 <?php namespace Lamoni\RESTLyte\RESTLyteRequest;
 
+/**
+ * Class RESTLyteRequestAbstract
+ * @package Lamoni\RESTLyte\RESTLyteRequest
+ * @abstract
+ */
 abstract class RESTLyteRequestAbstract
 {
-
+    /**
+     * Holds the cURL response from the server
+     *
+     * @var string
+     */
     protected $response;
 
+    /**
+     * Holds our cURL resource
+     *
+     * @var resource
+     */
     protected $curl;
 
+    /**
+     * @param $server
+     * @param $verb
+     * @param $path
+     * @param $authCredentials
+     * @param $accept
+     * @param $verifySSLPeer
+     * @param $HTTPHeaders
+     * @param $CURLOptions
+     */
     public function __construct($server, $verb, $path, $authCredentials, $accept, $verifySSLPeer, $HTTPHeaders, $CURLOptions)
     {
 
@@ -52,6 +76,12 @@ abstract class RESTLyteRequestAbstract
 
     }
 
+    /**
+     * Our response driver does its custom parsing here
+     *
+     * @param array $customArgs
+     * @return mixed
+     */
     abstract public function getResponse(array $customArgs=[]);
 
 

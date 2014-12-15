@@ -1,8 +1,18 @@
 <?php namespace Lamoni\RESTLyte\RESTLyteRequest;
 
+/**
+ * Class RESTLyteRequestJSON
+ * @package Lamoni\RESTLyte\RESTLyteRequest
+ */
 class RESTLyteRequestJSON extends RESTLyteRequestAbstract
 {
 
+    /**
+     * Parses our $this->response into a JSON-decoded object
+     *
+     * @param array $customArgs
+     * @return mixed
+     */
     public function getResponse(array $customArgs=[])
     {
         $defaultCustomArgs = [
