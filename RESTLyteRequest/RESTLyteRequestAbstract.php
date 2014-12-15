@@ -1,14 +1,16 @@
 <?php namespace Lamoni\RESTLyte\RESTLyteRequest;
 
-class RESTLyteRequest
+abstract class RESTLyteRequestAbstract
 {
 
     protected $response;
 
+    protected $curl;
+
     public function __construct($server, $verb, $path, $authCredentials, $accept, $verifySSLPeer, $HTTPHeaders, $CURLOptions)
     {
 
-        $curl = curl_init();
+        $this->curl = curl_init();
 
         $requestHeaders = [
             "{$verb} {$path} HTTP/1.0",
@@ -42,32 +44,15 @@ class RESTLyteRequest
 
         $defaultCURLOptions = $CURLOptions + $defaultCURLOptions;
 
-        curl_setopt_array($curl, $defaultCURLOptions);
+        curl_setopt_array($this->curl, $defaultCURLOptions);
 
-        $this->response = (string)curl_exec($curl);
+        $this->response = (string)curl_exec($this->curl);
 
-        curl_close($curl);
-
-    }
-
-    public function getXMLResponse($options=0, $dataIsURL=false, $namespace="", $isPrefix=false)
-    {
-        $xmlResponse = new \SimpleXMLElement($this->response, $options, $dataIsURL, $namespace, $isPrefix);
-        if (count(libxml_get_errors())) {
-            return libxml_get_errors();
-        }
-
-        return $xmlResponse;
+        curl_close($this->curl);
 
     }
 
-    public function getJSONResponse($associative=false, $depth=512, $options=0)
-    {
-
-        return json_decode($this->response, $associative, $depth, $options);
-
-    }
-
+    abstract public function getResponse(array $customArgs=[]);
 
 
 }

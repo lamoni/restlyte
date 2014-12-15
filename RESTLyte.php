@@ -1,6 +1,6 @@
 <?php namespace Lamoni\RESTLyte;
 
-use Lamoni\RESTLyte\RESTLyteRequest\RESTLyteRequest;
+
 /**
  * Class RESTLyte
  * @package Lamoni\RESTLyte
@@ -21,6 +21,8 @@ class RESTLyte
 
     protected $HTTPHeaders = [];
 
+    protected $responseType;
+
     /**
      * Create an instance of RESTLyte given the parameters.
      *
@@ -30,7 +32,7 @@ class RESTLyte
      * @param bool $verifySSLPeer
      * @param array $HTTPHeaders
      */
-    public function __construct($username, $password, $server, $verifySSLPeer=true, $HTTPHeaders=[])
+    public function __construct($username, $password, $server, $responseType, $verifySSLPeer=true, $HTTPHeaders=[])
     {
 
         $this->setAuthCredentials($username, $password);
@@ -41,6 +43,24 @@ class RESTLyte
 
         $this->setHTTPHeaders($HTTPHeaders);
 
+        $this->setResponseType($responseType);
+
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getResponseType()
+    {
+        return $this->responseType;
+    }
+
+    /**
+     * @param mixed $responseType
+     */
+    public function setResponseType($responseType)
+    {
+        $this->responseType = $responseType;
     }
 
     /**
@@ -215,7 +235,7 @@ class RESTLyte
      * @param $path
      * @param $accept
      * @param array $customCURLOptions
-     * @return \Lamoni\RESTLyte\RESTLyteRequest\RESTLyteRequest
+     * @return \Lamoni\RESTLyte\RESTLyteRequest\RESTLyteRequestAbstract
      */
     public function request($verb, $path, $accept, array $customCURLOptions=[])
     {
@@ -226,7 +246,9 @@ class RESTLyte
             )
         );
 
-        return new RESTLyteRequest(
+        $instantiateClass = '\Lamoni\RESTLyte\RESTLyteRequest\RESTLyteRequest'.$this->getResponseType();
+
+        return new $instantiateClass(
             $this->getServer(),
             $verb,
             $path,
@@ -242,7 +264,7 @@ class RESTLyte
     /**
      * @param $path
      * @param string $accept
-     * @return \Lamoni\RESTLyte\RESTLyteRequest\RESTLyteRequest
+     * @return \Lamoni\RESTLyte\RESTLyteRequest\RESTLyteRequestAbstract
      */
     public function get($path, $accept="")
     {
@@ -261,7 +283,7 @@ class RESTLyte
      * @param $path
      * @param $postData
      * @param string $accept
-     * @return \Lamoni\RESTLyte\RESTLyteRequest\RESTLyteRequest
+     * @return \Lamoni\RESTLyte\RESTLyteRequest\RESTLyteRequestAbstract
      */
     public function post($path, $postData, $accept="")
     {
@@ -282,7 +304,7 @@ class RESTLyte
      * @param $path
      * @param $postData
      * @param string $accept
-     * @return \Lamoni\RESTLyte\RESTLyteRequest\RESTLyteRequest
+     * @return \Lamoni\RESTLyte\RESTLyteRequest\RESTLyteRequestAbstract
      */
     public function put($path, $postData, $accept="")
     {
@@ -303,7 +325,7 @@ class RESTLyte
      * @param $path
      * @param $postData
      * @param string $accept
-     * @return \Lamoni\RESTLyte\RESTLyteRequest\RESTLyteRequest
+     * @return \Lamoni\RESTLyte\RESTLyteRequest\RESTLyteRequestAbstract
      */
     public function patch($path, $postData, $accept="")
     {
@@ -324,7 +346,7 @@ class RESTLyte
      * @param $path
      * @param $postData
      * @param string $accept
-     * @return \Lamoni\RESTLyte\RESTLyteRequest\RESTLyteRequest
+     * @return \Lamoni\RESTLyte\RESTLyteRequest\RESTLyteRequestAbstract
      */
     public function delete($path, $postData, $accept="")
     {
