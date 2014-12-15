@@ -10,19 +10,19 @@ Call REST API with HTTP Authentication, disable SSL checking, send custom HTTP h
 --------
 ```php
 $rest = new RESTLyte(
-    "https://spaceexample.io",
-    "username",
-    "password",
-    false,
-    [
+    "https://spaceexample.io",  // Server
+    "username",                 // Username
+    "password",                 // Password
+    false,                      // SSL Checking?
+    [                           // Array of custom HTTP headers to send with the API call
         'Cache-Control: no-cache'
     ]
 );
 
 $response = $rest->get(
-    '/api/space/device-management/devices',
-    'JSON',
-    'application/vnd.net.juniper.space.device-management.devices+json;version=1'
+    '/api/space/device-management/devices', // API call
+    'JSON',                                 // Response handler (RAW | JSON | XML)
+    'application/vnd.net.juniper.space.device-management.devices+json;version=1' // "Accept: "
 );
 
 ```
