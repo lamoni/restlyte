@@ -27,9 +27,10 @@ class RESTLyteRequestXML extends RESTLyteRequestAbstract
         extract($customArgs);
 
         try {
-            $xmlResponse = new \SimpleXMLElement($this->response, $options, $dataIsURL, $namespace, $isPrefix);
+            $xmlResponse = @new \SimpleXMLElement($this->response, $options, $dataIsURL, $namespace, $isPrefix);
         } catch(\Exception $e) {
-            $this->response = $e->getMessage();
+
+            return $this->response;
         }
         if (count(libxml_get_errors())) {
 
