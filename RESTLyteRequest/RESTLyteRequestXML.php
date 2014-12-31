@@ -26,8 +26,11 @@ class RESTLyteRequestXML extends RESTLyteRequestAbstract
 
         extract($customArgs);
 
-        $xmlResponse = new \SimpleXMLElement($this->response, $options, $dataIsURL, $namespace, $isPrefix);
-
+        try {
+            $xmlResponse = new \SimpleXMLElement($this->response, $options, $dataIsURL, $namespace, $isPrefix);
+        } catch(\Exception $e) {
+            $this->response = $e->getMessage();
+        }
         if (count(libxml_get_errors())) {
 
             throw new \Exception("Unable to parse XML: " . libxml_get_errors());
