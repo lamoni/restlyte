@@ -261,7 +261,12 @@ class RESTLyte
             $customCURLOptions
         );
 
-        return $request->getResponse();
+        try {
+            return $request->getResponse();
+        }
+        catch( \Exception $e ) {
+            throw new \Exception($e->getMessage());
+        }
     }
 
     /**
@@ -271,13 +276,16 @@ class RESTLyte
      */
     public function get($path, $accept="")
     {
-
-        return $this->request(
-            'GET',
-            $path,
-            $accept
-        );
-
+        try {
+            return $this->request(
+                'GET',
+                $path,
+                $accept
+            );
+        }
+        catch( Exception $e ) {
+            throw new \Exception($e->getMessage());
+        }
     }
 
     /**
@@ -290,15 +298,19 @@ class RESTLyte
      */
     public function post($path, $postData, $accept="")
     {
-        return $this->request(
-            'POST',
-            $path,
-            $accept,
-            [
-                CURLOPT_POSTFIELDS => $postData
-            ]
-        );
-
+        try {
+            return $this->request(
+                'POST',
+                $path,
+                $accept,
+                [
+                    CURLOPT_POSTFIELDS => $postData
+                ]
+            );
+        }
+        catch( Exception $e ) {
+            throw new \Exception($e->getMessage());
+        }
     }
 
     /**
@@ -311,15 +323,19 @@ class RESTLyte
      */
     public function put($path, $postData, $accept="")
     {
-        return $this->request(
-            'PUT',
-            $path,
-            $accept,
-            [
-                CURLOPT_POSTFIELDS => $postData
-            ]
-        );
-
+        try {
+            return $this->request(
+                'PUT',
+                $path,
+                $accept,
+                [
+                    CURLOPT_POSTFIELDS => $postData
+                ]
+            );
+        }
+        catch( Exception $e ) {
+            throw new \Exception($e->getMessage());
+        }
     }
 
     /**
@@ -332,15 +348,19 @@ class RESTLyte
      */
     public function patch($path, $postData, $accept="")
     {
-        return $this->request(
-            'PATCH',
-            $path,
-            $accept,
-            [
-                CURLOPT_POSTFIELDS => $postData
-            ]
-        );
-
+        try {
+            return $this->request(
+                'PATCH',
+                $path,
+                $accept,
+                [
+                    CURLOPT_POSTFIELDS => $postData
+                ]
+            );
+        }
+        catch( Exception $e ) {
+            throw new \Exception($e->getMessage());
+        }
     }
 
     /**
@@ -353,15 +373,19 @@ class RESTLyte
      */
     public function delete($path, $postData, $accept="")
     {
-        return $this->request(
-            'DELETE',
-            $path,
-            $accept,
-            [
-                CURLOPT_POSTFIELDS => $postData
-            ]
-        );
-
+        try {
+            return $this->request(
+                'DELETE',
+                $path,
+                $accept,
+                [
+                    CURLOPT_POSTFIELDS => $postData
+                ]
+            );
+        }
+        catch( Exception $e ) {
+            throw new \Exception($e->getMessage());
+        }
     }
 
 }
